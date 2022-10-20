@@ -1,18 +1,17 @@
 import { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { setMess } from '../features/messSlice';
 
-const Register = () => {
+const Login = () => {
 	const [form, setForm] = useState({
-		username: '',
 		email: '',
 		password: '',
 	});
-	let mess = useSelector(state => state.mess.mess)
 	const navigate = useNavigate();
 	const dispatch = useDispatch();
+	const mess = useSelector(state => state.mess.mess);
 
 	const postForm = async () => {
 		let headersList = {
@@ -20,13 +19,12 @@ const Register = () => {
 		};
 
 		let bodyContent = JSON.stringify({
-			username: form.username,
 			email: form.email,
 			password: form.password,
 		});
 
 		let reqOptions = {
-			url: 'https://webgame395group.herokuapp.com/api/register',
+			url: 'https://webgame395group.herokuapp.com/api/login',
 			method: 'POST',
 			headers: headersList,
 			data: bodyContent,
@@ -41,7 +39,7 @@ const Register = () => {
 			.then(res => {
 				if (res.data.type === 'success') {
 					dispatch(setMess(res.data.message));
-					setTimeout(() => navigate('/login'), 1000);
+					setTimeout(() => navigate('/home'));
 				} else {
 					dispatch(setMess(res.data.message));
 				}
@@ -50,31 +48,28 @@ const Register = () => {
 	};
 
 	return (
-		<div>
-			<h1>Register</h1>
+		<>
+			<h1>Login</h1>
 			{mess ? mess : ''}
 			<form method='post' onSubmit={handleSubmit}>
 				<div>
 					<input
-						placeholder='username'
-						name='username'
-						onChange={e => setForm({ ...form, username: e.target.value })}
+						placeholder='email'
+						name='email'
+						onChange={e => setForm({ ...form, [e.target.name]: e.target.value })}
 					/>
-				</div>
-				<div>
-					<input placeholder='email' name='email' onChange={e => setForm({ ...form, email: e.target.value })} />
 				</div>
 				<div>
 					<input
 						placeholder='password'
 						name='password'
-						onChange={e => setForm({ ...form, password: e.target.value })}
+						onChange={e => setForm({ ...form, [e.target.name]: e.target.value })}
 					/>
 				</div>
 				<button type='submit'>submit</button>
 			</form>
-		</div>
+		</>
 	);
 };
 
-export default Register;
+export default Login;
